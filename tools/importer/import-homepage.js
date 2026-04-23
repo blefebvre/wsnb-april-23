@@ -1,7 +1,7 @@
 /* eslint-disable */
 /* global WebImporter */
 
-import heroCarouselParser from './parsers/hero-carousel.js';
+import carouselHomepageParser from './parsers/carousel-homepage.js';
 import columnsNewsParser from './parsers/columns-news.js';
 import cardsFeatureParser from './parsers/cards-feature.js';
 import tabsResourcesParser from './parsers/tabs-resources.js';
@@ -11,7 +11,7 @@ import worksafenbCleanupTransformer from './transformers/worksafenb-cleanup.js';
 import worksafenbSectionsTransformer from './transformers/worksafenb-sections.js';
 
 const parsers = {
-  'hero-carousel': heroCarouselParser,
+  'carousel-homepage': carouselHomepageParser,
   'columns-news': columnsNewsParser,
   'cards-feature': cardsFeatureParser,
   'tabs-resources': tabsResourcesParser,
@@ -26,7 +26,7 @@ const PAGE_TEMPLATE = {
   ],
   blocks: [
     {
-      name: 'hero-carousel',
+      name: 'carousel-homepage',
       instances: ['.home-carousel-container'],
     },
     {
@@ -52,7 +52,7 @@ const PAGE_TEMPLATE = {
       name: 'Hero Carousel',
       selector: '.home-carousel-container',
       style: null,
-      blocks: ['hero-carousel'],
+      blocks: ['carousel-homepage'],
       defaultContent: [],
     },
     {

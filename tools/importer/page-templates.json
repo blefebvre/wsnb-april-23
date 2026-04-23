@@ -11,7 +11,7 @@
       "description": "WorkSafeNB homepage with hero, quick links, news, and resources sections",
       "blocks": [
         {
-          "name": "hero-carousel",
+          "name": "carousel-homepage",
           "instances": [
             ".home-carousel-container"
           ]
@@ -49,7 +49,7 @@
           "selector": ".home-carousel-container",
           "style": null,
           "blocks": [
-            "hero-carousel"
+            "carousel-homepage"
           ],
           "defaultContent": []
         },

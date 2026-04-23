@@ -40,58 +40,48 @@ var CustomImportScript = (() => {
     default: () => import_homepage_default
   });
 
-  // tools/importer/parsers/hero-carousel.js
+  // tools/importer/parsers/carousel-homepage.js
   function parse(element, { document }) {
-    const slideLinks = element.querySelectorAll("#home-carousel > a:not(.bx-clone), ul > a:not(.bx-clone)");
-    const allLinks = slideLinks.length > 0 ? slideLinks : element.querySelectorAll("a:not(.bx-clone)");
-    let targetLink = null;
-    let targetHeading = null;
-    for (const link of allLinks) {
-      const heading = link.querySelector('h1, h2, h3, [class*="title"]');
-      if (heading && heading.textContent.trim()) {
-        targetLink = link;
-        targetHeading = heading;
-        break;
-      }
-    }
+    const slideLinks = element.querySelectorAll("#home-carousel > a:not(.bx-clone)");
+    if (slideLinks.length === 0) return;
     const cells = [];
-    const bgImage = element.querySelector('img, picture, [style*="background-image"]');
-    if (bgImage) {
-      if (bgImage.tagName === "IMG" || bgImage.tagName === "PICTURE") {
-        cells.push([bgImage]);
-      } else {
-        const style = bgImage.getAttribute("style") || "";
-        const urlMatch = style.match(/background-image:\s*url\(['"]?([^'")\s]+)['"]?\)/i);
+    slideLinks.forEach((link) => {
+      const slide = link.querySelector("li.slide, .slide");
+      const heading = slide ? slide.querySelector("h1, h2, h3") : link.querySelector("h1, h2, h3");
+      const href = link.getAttribute("href") || "";
+      const title = link.getAttribute("title") || "";
+      const headingText = heading ? heading.textContent.trim() : title;
+      if (!headingText && !href) return;
+      const imageCell = document.createElement("div");
+      if (slide) {
+        const bgStyle = window.getComputedStyle(slide).backgroundImage;
+        const urlMatch = bgStyle && bgStyle !== "none" ? bgStyle.match(/url\(["']?([^"')]+)["']?\)/) : null;
         if (urlMatch) {
           const img = document.createElement("img");
           img.src = urlMatch[1];
-          img.alt = "";
-          cells.push([img]);
+          img.alt = headingText || "";
+          imageCell.append(img);
         }
       }
-    }
-    const contentContainer = document.createElement("div");
-    if (targetHeading) {
-      const h1 = document.createElement("h1");
-      h1.textContent = targetHeading.textContent.trim();
-      contentContainer.append(h1);
-    }
-    if (targetLink) {
-      const href = targetLink.getAttribute("href") || "";
+      const contentCell = document.createElement("div");
+      if (headingText) {
+        const h2 = document.createElement("h2");
+        h2.textContent = headingText;
+        contentCell.append(h2);
+      }
       if (href) {
         const p = document.createElement("p");
         const cta = document.createElement("a");
         cta.href = href;
-        cta.textContent = targetLink.getAttribute("title") || (targetHeading == null ? void 0 : targetHeading.textContent.trim()) || "Learn More";
+        cta.textContent = title || headingText || "Learn More";
         p.append(cta);
-        contentContainer.append(p);
+        contentCell.append(p);
       }
-    }
-    if (contentContainer.childNodes.length > 0) {
-      cells.push([contentContainer]);
-    }
+      cells.push([imageCell, contentCell]);
+    });
+    if (cells.length === 0) return;
     const block = WebImporter.Blocks.createBlock(document, {
-      name: "hero-carousel",
+      name: "carousel-homepage",
       cells
     });
     element.replaceWith(block);
@@ -483,7 +473,7 @@ var CustomImportScript = (() => {
 
   // tools/importer/import-homepage.js
   var parsers = {
-    "hero-carousel": parse,
+    "carousel-homepage": parse,
     "columns-news": parse2,
     "cards-feature": parse3,
     "tabs-resources": parse4,
@@ -497,7 +487,7 @@ var CustomImportScript = (() => {
     ],
     blocks: [
       {
-        name: "hero-carousel",
+        name: "carousel-homepage",
         instances: [".home-carousel-container"]
       },
       {
@@ -523,7 +513,7 @@ var CustomImportScript = (() => {
         name: "Hero Carousel",
         selector: ".home-carousel-container",
         style: null,
-        blocks: ["hero-carousel"],
+        blocks: ["carousel-homepage"],
         defaultContent: []
       },
       {

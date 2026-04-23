@@ -1,0 +1,39 @@
+{
+  "variantName": "cards-feature",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-04-23T18:50:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/",
+    "originPage": "WorkSafeNB homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "feature-cards",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "image + text label + link",
+    "buttonCount": 0,
+    "imageCount": 3
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "feature highlight sections",
+      "quick-action card grids",
+      "service overview cards"
+    ],
+    "notSuitableFor": [
+      "detailed product cards with descriptions",
+      "team member profiles",
+      "text-only card layouts"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2026-04-23T18:50:00.000Z"
+  }
+}

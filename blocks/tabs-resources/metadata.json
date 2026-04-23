@@ -1,0 +1,39 @@
+{
+  "variantName": "tabs-resources",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-04-23T18:50:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/",
+    "originPage": "WorkSafeNB homepage",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "resource-tabs",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "tab labels + tabbed table content",
+    "buttonCount": 5,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "resource and publication listings",
+      "tabbed data tables",
+      "categorized form/document listings"
+    ],
+    "notSuitableFor": [
+      "image gallery tabs",
+      "single-content sections",
+      "accordion-style content"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2026-04-23T18:50:00.000Z"
+  }
+}

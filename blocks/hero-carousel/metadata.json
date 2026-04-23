@@ -1,0 +1,39 @@
+{
+  "variantName": "hero-carousel",
+  "baseBlock": "hero",
+  "version": "1.0.0",
+  "created": "2026-04-23T18:50:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/",
+    "originPage": "WorkSafeNB homepage",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "homepage-hero",
+    "imagePattern": "large"
+  },
+  "contentPattern": {
+    "structure": "background image + heading + CTA link",
+    "buttonCount": 1,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "homepage hero banners",
+      "landing pages with promotional content",
+      "pages with featured announcements"
+    ],
+    "notSuitableFor": [
+      "interior content pages",
+      "blog articles",
+      "form-heavy pages"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2026-04-23T18:50:00.000Z"
+  }
+}

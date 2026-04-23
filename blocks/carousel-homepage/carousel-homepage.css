@@ -1,3 +1,8 @@
+.carousel-homepage-container .carousel-homepage-wrapper {
+  max-width: unset;
+  padding: 0;
+}
+
 .carousel-homepage .carousel-homepage-slides-container {
   position: relative;
 }
@@ -26,18 +31,10 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-end;
   position: relative;
   width: 100%;
-  min-height: min(50vw, calc(100dvh - var(--header-height)));
-}
-
-.carousel-homepage .carousel-homepage-slide:has(.carousel-homepage-slide-content[data-align='center']) {
-  align-items: center;
-}
-
-.carousel-homepage .carousel-homepage-slide:has(.carousel-homepage-slide-content[data-align='right']) {
-  align-items: flex-end;
+  min-height: 290px;
 }
 
 .carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-image picture {
@@ -53,12 +50,33 @@
 
 .carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content {
   z-index: 1;
-  margin: 68px;
-  padding: 16px;
-  color: white;
-  background-color: rgb(19 19 19 / 75%);
+  padding: 15px 15px 15px 30px;
   position: relative;
-  width: var(--slide-content-width, auto);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content h1,
+.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content h2 {
+  color: #fff;
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0;
+  text-shadow: 1px 1px 3px rgb(0 0 0 / 50%);
+}
+
+.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content p {
+  margin: 8px 0 0;
+}
+
+.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content a:hover {
+  text-decoration: underline;
 }
 
 .carousel-homepage .carousel-homepage-slide-indicators {
@@ -72,19 +90,21 @@
 }
 
 .carousel-homepage .carousel-homepage-slide-indicator button {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   margin: 0;
   padding: 0;
   border-radius: 50%;
-  background-color: #dadada;
-  transition: background-color 0.2s;
+  background-color: #c2dae6;
+  border: none;
+  cursor: pointer;
+  transition: background-color var(--transition-base);
 }
 
 .carousel-homepage .carousel-homepage-slide-indicator button:disabled,
 .carousel-homepage .carousel-homepage-slide-indicator button:hover,
 .carousel-homepage .carousel-homepage-slide-indicator button:focus-visible {
-  background-color: var(--text-color);
+  background-color: var(--brand-primary);
 }
 
 .carousel-homepage .carousel-homepage-navigation-buttons {
@@ -102,28 +122,31 @@
 /* stylelint-disable-next-line no-descending-specificity */
 .carousel-homepage .carousel-homepage-navigation-buttons button {
   position: relative;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   margin: 0;
   border-radius: 50%;
   padding: 0;
-  background-color: rgb(19 19 19 / 25%);
-  transition: background-color 0.2s;
+  border: none;
+  background-color: rgb(0 0 0 / 30%);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--transition-base);
 }
 
 .carousel-homepage .carousel-homepage-navigation-buttons button:hover,
 .carousel-homepage .carousel-homepage-navigation-buttons button:focus-visible {
-  background-color: rgb(19 19 19 / 75%);
+  background-color: rgb(0 0 0 / 60%);
 }
 
 .carousel-homepage .carousel-homepage-navigation-buttons button::after {
   display: block;
   content: '';
-  border: 2px solid;
+  border: 2px solid #fff;
   border-bottom: 0;
   border-left: 0;
-  height: 12px;
-  width: 12px;
+  height: 10px;
+  width: 10px;
   position: absolute;
   top: 50%;
   left: calc(50% + 2px);
@@ -133,21 +156,4 @@
 .carousel-homepage .carousel-homepage-navigation-buttons button.slide-next::after {
   transform: translate(-50%, -50%) rotate(45deg);
   left: calc(50% - 2px);
-}
-
-@media (width >= 600px) {
-  .carousel-homepage .carousel-homepage-navigation-buttons {
-    left: 24px;
-    right: 24px;
-  }
-
-  .carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content {
-    --slide-content-width: calc((100% - 184px) / 2);
-
-    margin: 92px;
-  }
-
-  .carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content[data-align='justify'] {
-    --slide-content-width: auto;
-  }
 }

@@ -1,5 +1,4 @@
 import { toClassName } from '../../scripts/aem.js';
-import { moveInstrumentation } from '../../scripts/scripts.js';
 
 export default async function decorate(block) {
   const tablist = document.createElement('div');
@@ -21,7 +20,6 @@ export default async function decorate(block) {
     button.className = 'tabs-resources-tab';
     button.id = `tab-${id}`;
 
-    moveInstrumentation(tab.parentElement, tabpanel.lastElementChild);
     button.innerHTML = tab.innerHTML;
 
     button.setAttribute('aria-controls', `tabpanel-${id}`);
@@ -40,7 +38,6 @@ export default async function decorate(block) {
     });
     tablist.append(button);
     tab.remove();
-    moveInstrumentation(button.querySelector('p'), null);
   });
 
   block.prepend(tablist);

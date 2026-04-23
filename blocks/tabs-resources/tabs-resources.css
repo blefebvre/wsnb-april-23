@@ -1,57 +1,76 @@
 .tabs-resources .tabs-resources-list {
   display: flex;
-  gap: 0.5ch;
+  gap: 0;
   max-width: 100%;
-  font-size: var(--body-font-size-xs);
+  font-size: var(--body-font-size-m);
   overflow-x: auto;
-}
-
-@media (width >= 600px) {
-  .tabs-resources .tabs-resources-list {
-    font-size: var(--body-font-size-s);
-  }
-}
-
-@media (width >= 900px) {
-  .tabs-resources .tabs-resources-list {
-    font-size: var(--body-font-size-m);
-  }
+  border-bottom: 2px solid var(--brand-light-blue);
 }
 
 .tabs-resources .tabs-resources-list button {
   flex: 0 0 max-content;
   margin: 0;
-  border: 1px solid #dadada;
+  border: none;
+  border-bottom: 3px solid transparent;
   border-radius: 0;
-  padding: 0.5em;
-  background-color: var(--light-color);
-  color: initial;
-  font-weight: bold;
+  padding: 10px 15px;
+  background-color: transparent;
+  color: #000;
+  font-weight: 700;
+  font-size: var(--body-font-size-m);
   line-height: unset;
   text-align: initial;
-  text-overflow: unset;
-  overflow: unset;
-  white-space: unset;
-  transition: background-color 0.2s;
+  cursor: pointer;
+  transition: border-color var(--transition-base), background-color var(--transition-base);
 }
 
 .tabs-resources .tabs-resources-list button p {
   margin: 0;
 }
 
+.tabs-resources .tabs-resources-list button:hover {
+  background-color: var(--brand-light-blue);
+}
+
 .tabs-resources .tabs-resources-list button[aria-selected='true'] {
-  border-bottom: 1px solid var(--background-color);
-  background-color: var(--background-color);
-  cursor: initial;
+  border-bottom-color: var(--brand-primary);
+  background-color: var(--brand-light-blue);
+  cursor: default;
 }
 
 .tabs-resources .tabs-resources-panel {
-  margin-top: -1px;
-  padding: 24px;
-  border: 1px solid #dadada;
+  padding: 20px;
   overflow: auto;
 }
 
 .tabs-resources .tabs-resources-panel[aria-hidden='true'] {
   display: none;
+}
+
+.tabs-resources .tabs-resources-panel h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--heading-color);
+  margin-top: 16px;
+}
+
+.tabs-resources .tabs-resources-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0;
+}
+
+.tabs-resources .tabs-resources-panel li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: var(--body-font-size-m);
+  line-height: 1.4;
+}
+
+.tabs-resources .tabs-resources-panel a {
+  color: #000;
+}
+
+.tabs-resources .tabs-resources-panel a:hover {
+  text-decoration: underline;
 }

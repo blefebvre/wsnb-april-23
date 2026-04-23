@@ -1,33 +1,41 @@
 .columns-contact > div {
   display: flex;
   flex-direction: column;
+  gap: 20px;
+  border-top: 1px solid var(--brand-light-blue);
+  padding-top: 20px;
 }
 
-.columns-contact img {
-  width: 100%;
+.columns-contact h2 {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--heading-color);
+  margin-top: 0;
 }
 
-.columns-contact > div > div {
-  order: 1;
+.columns-contact a {
+  color: var(--link-color);
 }
 
-.columns-contact > div > .columns-contact-img-col {
-  order: 0;
+.columns-contact a:hover {
+  text-decoration: underline;
 }
 
-.columns-contact > div > .columns-contact-img-col img {
-  display: block;
+.columns-contact > div > div:last-child p {
+  margin: 4px 0;
 }
 
 @media (width >= 900px) {
   .columns-contact > div {
-    align-items: center;
-    flex-direction: unset;
-    gap: 24px;
+    flex-direction: row;
+    gap: 30px;
   }
 
-  .columns-contact > div > div {
+  .columns-contact > div > div:first-child {
+    flex: 2;
+  }
+
+  .columns-contact > div > div:last-child {
     flex: 1;
-    order: unset;
   }
 }

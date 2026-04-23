@@ -1,0 +1,39 @@
+{
+  "variantName": "columns-contact",
+  "baseBlock": "columns",
+  "version": "1.0.0",
+  "created": "2026-04-23T18:50:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/",
+    "originPage": "WorkSafeNB homepage",
+    "blockPosition": "bottom"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "compact",
+    "purpose": "contact-social",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "newsletter signup column + contact info column",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "contact and social media sections",
+      "newsletter signup with contact info",
+      "dark-background footer-adjacent sections"
+    ],
+    "notSuitableFor": [
+      "image-heavy layouts",
+      "light-background content sections",
+      "multi-column content grids"
+    ]
+  },
+  "usage": {
+    "pagesUsing": ["content/index"],
+    "reuseCount": 1,
+    "lastUsed": "2026-04-23T18:50:00.000Z"
+  }
+}

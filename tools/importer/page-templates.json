@@ -1,0 +1,109 @@
+{
+  "metadata": {
+    "projectType": "doc"
+  },
+  "templates": [
+    {
+      "name": "homepage",
+      "urls": [
+        "https://www.worksafenb.ca/"
+      ],
+      "description": "WorkSafeNB homepage with hero, quick links, news, and resources sections",
+      "blocks": [
+        {
+          "name": "hero-carousel",
+          "instances": [
+            ".home-carousel-container"
+          ]
+        },
+        {
+          "name": "columns-news",
+          "instances": [
+            ".col-md-8.news-widget",
+            ".col-md-4 .feature-box"
+          ]
+        },
+        {
+          "name": "cards-feature",
+          "instances": [
+            ".col-sm-4 .feature-box"
+          ]
+        },
+        {
+          "name": "tabs-resources",
+          "instances": [
+            ".home-page-tabs"
+          ]
+        },
+        {
+          "name": "columns-contact",
+          "instances": [
+            ".row.toolbar"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Hero Carousel",
+          "selector": ".home-carousel-container",
+          "style": null,
+          "blocks": [
+            "hero-carousel"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2",
+          "name": "News and Sidebar",
+          "selector": ".container > .row:nth-of-type(2)",
+          "style": null,
+          "blocks": [
+            "columns-news"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-3",
+          "name": "Feature Cards",
+          "selector": ".container > .row:nth-of-type(3)",
+          "style": null,
+          "blocks": [
+            "cards-feature"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-4",
+          "name": "Tabs Section",
+          "selector": ".home-page-tabs",
+          "style": null,
+          "blocks": [
+            "tabs-resources"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-5",
+          "name": "E-News and Connect",
+          "selector": ".row.toolbar",
+          "style": "dark",
+          "blocks": [
+            "columns-contact"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-6",
+          "name": "Footer",
+          "selector": ".footer-top",
+          "style": "dark",
+          "blocks": [],
+          "defaultContent": [
+            "footer"
+          ]
+        }
+      ]
+    }
+  ]
+}

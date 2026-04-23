@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "url": "https://www.worksafenb.ca/",
+  "path": "index",
+  "timestamp": "2026-04-23T19:06:52.883Z",
+  "title": "WorkSafeNB | WorkSafeNB",
+  "template": "homepage",
+  "blocks": [
+    "hero-carousel",
+    "columns-news",
+    "columns-news",
+    "columns-news",
+    "cards-feature",
+    "cards-feature",
+    "cards-feature",
+    "tabs-resources",
+    "columns-contact"
+  ]
+}

@@ -2,8 +2,8 @@
 Your project's description...
 
 ## Environments
-- Preview: https://main--{repo}--{owner}.aem.page/
-- Live: https://main--{repo}--{owner}.aem.live/
+- Preview: https://main--wsnb-april-23--blefebvre.aem.page/
+- Live: https://main--wsnb-april-23--blefebvre.aem.live/
 
 ## Documentation
 

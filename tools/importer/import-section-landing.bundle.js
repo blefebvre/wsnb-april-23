@@ -348,6 +348,7 @@ var CustomImportScript = (() => {
       WebImporter.DOMUtils.remove(element, [".bx-clone"]);
       WebImporter.DOMUtils.remove(element, [".bx-controls"]);
       WebImporter.DOMUtils.remove(element, ["table.gssb_c"]);
+      WebImporter.DOMUtils.remove(element, [".breadcrumb-container", "ul.breadcrumb"]);
     }
     if (hookName === TransformHook.afterTransform) {
       WebImporter.DOMUtils.remove(element, ["nav.navbar"]);

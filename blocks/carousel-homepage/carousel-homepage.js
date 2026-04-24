@@ -83,15 +83,18 @@ function createSlide(row, slideIndex, carouselId) {
 
   if (imageCol && contentCol) {
     const contentLink = contentCol.querySelector('a');
-    const picture = imageCol.querySelector('picture');
-    if (contentLink && picture) {
+    const img = imageCol.querySelector('picture, img');
+    if (contentLink && img) {
       const wrapper = document.createElement('a');
       wrapper.href = contentLink.href;
-      wrapper.setAttribute('aria-hidden', 'true');
-      wrapper.setAttribute('tabindex', '-1');
-      picture.parentNode.insertBefore(wrapper, picture);
-      wrapper.append(picture);
+      wrapper.className = 'carousel-homepage-slide-link';
+      wrapper.title = contentLink.textContent.trim();
+      imageCol.textContent = '';
+      wrapper.append(img);
+      imageCol.append(wrapper);
     }
+    const p = contentCol.querySelector('p');
+    if (p) p.remove();
   }
 
   if (imageCol) slide.append(imageCol);

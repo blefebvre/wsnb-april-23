@@ -62,6 +62,7 @@
   padding: 15px 15px 15px 30px;
   background-color: rgb(0 0 0 / 50%);
   box-sizing: border-box;
+  pointer-events: none;
 }
 
 .carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content h1,
@@ -74,14 +75,10 @@
   margin: 0;
 }
 
-.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content p {
-  margin: 0;
-  display: none;
-}
-
-.carousel-homepage .carousel-homepage-slide .carousel-homepage-slide-content a {
-  color: #fff;
-  text-decoration: none;
+.carousel-homepage .carousel-homepage-slide-link {
+  display: block;
+  position: absolute;
+  inset: 0;
 }
 
 /* dots / pager */

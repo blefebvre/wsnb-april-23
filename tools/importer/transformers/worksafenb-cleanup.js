@@ -18,6 +18,9 @@ export default function transform(hookName, element, payload) {
 
     // Remove Google Custom Search suggestion dropdown tables - found at lines 720, 730, 740 in cleaned.html
     WebImporter.DOMUtils.remove(element, ['table.gssb_c']);
+
+    // Remove breadcrumb navigation (e.g. "Home > Workers") from section-landing pages
+    WebImporter.DOMUtils.remove(element, ['.breadcrumb-container', 'ul.breadcrumb']);
   }
 
   if (hookName === TransformHook.afterTransform) {

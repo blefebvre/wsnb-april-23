@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "url": "https://www.worksafenb.ca/employers/",
+  "path": "employers",
+  "timestamp": "2026-04-24T21:23:19.724Z",
+  "title": "WorkSafeNB | Employers",
+  "template": "section-landing",
+  "blocks": [
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "columns-contact"
+  ]
+}

@@ -1,0 +1,68 @@
+.cards-overlay > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+.cards-overlay > ul > li {
+  margin: 0;
+  padding: 0;
+}
+
+.cards-overlay .cards-overlay-card {
+  position: relative;
+  display: block;
+  border: 1px solid var(--brand-light-blue);
+  border-radius: 0 8px 8px;
+  overflow: hidden;
+  min-height: 281px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.cards-overlay .cards-overlay-card-image {
+  position: absolute;
+  inset: 0;
+  line-height: 0;
+}
+
+.cards-overlay .cards-overlay-card-image img,
+.cards-overlay .cards-overlay-card-image picture {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cards-overlay .cards-overlay-card-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgb(0 0 0 / 50%);
+  color: #fff;
+  padding: 10px 10px 10px 28px;
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.cards-overlay .cards-overlay-card-caption p {
+  margin: 0;
+  position: relative;
+}
+
+.cards-overlay .cards-overlay-card-caption p::before {
+  content: '\203A';
+  position: absolute;
+  left: -18px;
+  top: 0;
+  font-size: 1.1em;
+}
+
+a.cards-overlay-card:hover .cards-overlay-card-caption {
+  background: rgb(0 61 105 / 70%);
+}

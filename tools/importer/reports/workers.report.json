@@ -1,0 +1,16 @@
+{
+  "status": "success",
+  "url": "https://www.worksafenb.ca/workers/",
+  "path": "workers",
+  "timestamp": "2026-04-24T21:23:15.360Z",
+  "title": "WorkSafeNB | Workers",
+  "template": "section-landing",
+  "blocks": [
+    "cards-overlay",
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "columns-contact"
+  ]
+}

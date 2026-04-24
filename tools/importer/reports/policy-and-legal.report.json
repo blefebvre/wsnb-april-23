@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "url": "https://www.worksafenb.ca/policy-and-legal/",
+  "path": "policy-and-legal",
+  "timestamp": "2026-04-24T21:23:24.285Z",
+  "title": "WorkSafeNB | Policy and Legal",
+  "template": "section-landing",
+  "blocks": [
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "nav-panel",
+    "columns-contact"
+  ]
+}

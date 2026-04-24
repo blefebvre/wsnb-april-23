@@ -323,94 +323,113 @@ var CustomImportScript = (() => {
 
   // tools/importer/parsers/columns-contact.js
   function parse5(element, { document }) {
-    const col1Source = element.querySelector(".col-sm-8");
+    const headings = Array.from(element.querySelectorAll("h2"));
+    let enewsHeading = null;
+    let connectHeading = null;
+    headings.forEach((h) => {
+      const text = h.textContent.trim().replace(/\s+/g, " ").toLowerCase();
+      if (!enewsHeading && text.includes("e-news")) enewsHeading = h;
+      else if (!connectHeading && text.includes("connect")) connectHeading = h;
+    });
+    const findSource = (heading) => {
+      if (!heading) return null;
+      const col8or4 = heading.closest(".col-sm-8, .col-sm-4");
+      if (col8or4) return col8or4;
+      const innerCol = heading.closest(".col-sm-12");
+      if (innerCol) {
+        const containingRow = innerCol.closest(".row");
+        if (containingRow) return containingRow;
+        return innerCol;
+      }
+      return heading.parentElement;
+    };
+    const enewsSrc = findSource(enewsHeading);
+    const connectSrc = findSource(connectHeading);
     const col1Content = [];
-    if (col1Source) {
-      const col1Heading = col1Source.querySelector("h2");
-      if (col1Heading) {
-        const h2 = document.createElement("h2");
-        h2.textContent = col1Heading.textContent.trim().replace(/\s+/g, " ");
-        col1Content.push(h2);
-      }
-      const signupDiv = col1Source.querySelector(".e-news-signup-text");
-      if (signupDiv) {
-        const p = document.createElement("p");
-        const signupLink = signupDiv.querySelector("a");
-        if (signupLink) {
-          const a = document.createElement("a");
-          a.href = signupLink.href || signupLink.getAttribute("href");
-          a.textContent = signupLink.textContent.trim();
-          p.append(a);
-        }
-        const fullText = signupDiv.textContent.trim();
-        const linkText = signupLink ? signupLink.textContent.trim() : "";
-        const trailingText = fullText.substring(fullText.indexOf(linkText) + linkText.length).trim();
-        if (trailingText) {
-          p.append(` ${trailingText}`);
-        }
-        col1Content.push(p);
-      }
+    if (enewsHeading) {
+      const h2 = document.createElement("h2");
+      h2.textContent = enewsHeading.textContent.trim().replace(/\s+/g, " ");
+      col1Content.push(h2);
     }
-    const col2Source = element.querySelector(".col-sm-4");
-    const col2Content = [];
-    if (col2Source) {
-      const col2Heading = col2Source.querySelector("h2");
-      if (col2Heading) {
-        const h2 = document.createElement("h2");
-        h2.textContent = col2Heading.textContent.trim().replace(/\s+/g, " ");
-        col2Content.push(h2);
+    const signupDiv = enewsSrc ? enewsSrc.querySelector(".e-news-signup-text") : null;
+    if (signupDiv) {
+      const p = document.createElement("p");
+      const signupLink = signupDiv.querySelector("a");
+      if (signupLink) {
+        const a = document.createElement("a");
+        a.href = (signupLink.getAttribute("href") || "").trim();
+        a.textContent = signupLink.textContent.trim();
+        p.append(a);
       }
-      const col2Clone = col2Source.cloneNode(true);
-      const childElements = Array.from(col2Clone.children);
+      const fullText = signupDiv.textContent.trim();
+      const linkText = signupLink ? signupLink.textContent.trim() : "";
+      const trailingText = linkText ? fullText.substring(fullText.indexOf(linkText) + linkText.length).trim() : fullText;
+      if (trailingText) p.append(` ${trailingText}`);
+      col1Content.push(p);
+    }
+    const col2Content = [];
+    if (connectHeading) {
+      const h2 = document.createElement("h2");
+      h2.textContent = connectHeading.textContent.trim().replace(/\s+/g, " ");
+      col2Content.push(h2);
+    }
+    if (connectSrc) {
       let phoneText = "";
-      for (const node of col2Source.childNodes) {
-        if (node.nodeType === 3) {
-          const text = node.textContent.trim();
-          if (text && text.includes("toll-free")) {
-            phoneText = text;
+      const phoneSpan = connectSrc.querySelector(".call-toll-free");
+      if (phoneSpan && phoneSpan.textContent.includes("toll-free")) {
+        phoneText = phoneSpan.textContent.trim();
+      }
+      if (!phoneText) {
+        const walker = (connectSrc.ownerDocument || document).createTreeWalker(
+          connectSrc,
+          /* NodeFilter.SHOW_TEXT = */
+          4,
+          null
+        );
+        let node;
+        while (node = walker.nextNode()) {
+          const t = node.textContent.trim();
+          if (t && t.toLowerCase().includes("toll-free")) {
+            phoneText = t.replace(/\s+/g, " ");
             break;
           }
         }
       }
       if (!phoneText) {
-        const fullColText = col2Source.textContent;
-        const phoneMatch = fullColText.match(/Call toll-free[^<\n]*/);
-        if (phoneMatch) {
-          phoneText = phoneMatch[0].trim();
-        }
+        const fullText = connectSrc.textContent;
+        const m = fullText.match(/Call toll-free[^\n\r]*?\d[\d\s-]+/);
+        if (m) phoneText = m[0].trim();
       }
       if (phoneText) {
         const p = document.createElement("p");
         p.textContent = phoneText;
         col2Content.push(p);
       }
-      const emailLink = col2Source.querySelector('a[href^="mailto:"]');
-      if (emailLink) {
+      const mailto = connectSrc.querySelector('a[href^="mailto:"]');
+      const inquiries = connectSrc.querySelector('a[title="General Inquiries"]');
+      const contactLink = mailto || inquiries;
+      if (contactLink) {
         const p = document.createElement("p");
         const a = document.createElement("a");
-        a.href = emailLink.href || emailLink.getAttribute("href");
-        a.textContent = emailLink.title || emailLink.textContent.trim().replace(/\s+/g, " ");
+        a.href = (contactLink.getAttribute("href") || "").trim();
+        a.textContent = contactLink.getAttribute("title") || contactLink.textContent.trim().replace(/\s+/g, " ");
         p.append(a);
         col2Content.push(p);
       }
-      const socialLinks = Array.from(col2Source.querySelectorAll(".social ul li a"));
+      const socialLinks = Array.from(connectSrc.querySelectorAll(".social ul li a"));
       if (socialLinks.length > 0) {
         const p = document.createElement("p");
         socialLinks.forEach((link, index) => {
           const a = document.createElement("a");
-          a.href = link.href || link.getAttribute("href");
-          a.textContent = link.title || link.className.replace(/function|small/g, "").trim();
-          if (index > 0) {
-            p.append(" ");
-          }
+          a.href = (link.getAttribute("href") || "").trim();
+          a.textContent = link.getAttribute("title") || link.className.replace(/function|small/g, "").trim();
+          if (index > 0) p.append(" ");
           p.append(a);
         });
         col2Content.push(p);
       }
     }
-    const cells = [
-      [col1Content, col2Content]
-    ];
+    const cells = [[col1Content, col2Content]];
     const block = WebImporter.Blocks.createBlock(document, { name: "columns-contact", cells });
     element.replaceWith(block);
   }
@@ -442,25 +461,26 @@ var CustomImportScript = (() => {
   // tools/importer/transformers/worksafenb-sections.js
   var TransformHook2 = { beforeTransform: "beforeTransform", afterTransform: "afterTransform" };
   function transform2(hookName, element, payload) {
-    if (hookName === TransformHook2.afterTransform) {
-      const sections = payload && payload.template && payload.template.sections;
-      if (!sections || sections.length < 2) return;
-      const document = element.ownerDocument || element;
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = sections[i];
-        const sectionEl = element.querySelector(section.selector);
-        if (!sectionEl) continue;
-        if (section.style) {
-          const sectionMetadata = WebImporter.Blocks.createBlock(document, {
-            name: "Section Metadata",
-            cells: { style: section.style }
-          });
-          sectionEl.after(sectionMetadata);
-        }
-        if (i > 0) {
-          const hr = document.createElement("hr");
-          sectionEl.before(hr);
-        }
+    if (hookName !== TransformHook2.beforeTransform) return;
+    const tmpl = payload && payload.template;
+    if (!tmpl || tmpl.name !== "homepage") return;
+    const sections = tmpl.sections;
+    if (!sections || sections.length < 2) return;
+    const document = element.ownerDocument || element;
+    for (let i = sections.length - 1; i >= 0; i--) {
+      const section = sections[i];
+      const sectionEl = element.querySelector(section.selector);
+      if (!sectionEl) continue;
+      if (section.style) {
+        const sectionMetadata = WebImporter.Blocks.createBlock(document, {
+          name: "Section Metadata",
+          cells: { style: section.style }
+        });
+        sectionEl.after(sectionMetadata);
+      }
+      if (i > 0) {
+        const hr = document.createElement("hr");
+        sectionEl.before(hr);
       }
     }
   }
@@ -599,6 +619,7 @@ var CustomImportScript = (() => {
         const parser = parsers[block.name];
         if (parser) {
           try {
+            if (!block.element.isConnected) return;
             parser(block.element, { document, url, params });
           } catch (e) {
             console.error(`Failed to parse ${block.name} (${block.selector}):`, e);

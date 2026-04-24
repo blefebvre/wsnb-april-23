@@ -1,5 +1,6 @@
 .carousel-homepage-container .carousel-homepage-wrapper {
-  max-width: unset;
+  max-width: var(--container-max-width);
+  margin: 0 auto;
   padding: 0;
 }
 

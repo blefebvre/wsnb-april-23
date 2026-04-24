@@ -14,7 +14,12 @@ export default async function decorate(block) {
   // decorate footer DOM
   block.textContent = '';
   const footer = document.createElement('div');
-  while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
+  const sections = fragment.querySelectorAll(':scope .section');
+  if (sections.length) {
+    sections.forEach((s) => footer.append(s));
+  } else {
+    while (fragment.firstElementChild) footer.append(fragment.firstElementChild);
+  }
 
   block.append(footer);
 }

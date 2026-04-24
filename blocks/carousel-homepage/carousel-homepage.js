@@ -74,10 +74,28 @@ function createSlide(row, slideIndex, carouselId) {
   slide.setAttribute('id', `carousel-homepage-${carouselId}-slide-${slideIndex}`);
   slide.classList.add('carousel-homepage-slide');
 
-  row.querySelectorAll(':scope > div').forEach((column, colIdx) => {
-    column.classList.add(`carousel-homepage-slide-${colIdx === 0 ? 'image' : 'content'}`);
-    slide.append(column);
-  });
+  const columns = row.querySelectorAll(':scope > div');
+  const imageCol = columns[0];
+  const contentCol = columns[1];
+
+  if (imageCol) imageCol.classList.add('carousel-homepage-slide-image');
+  if (contentCol) contentCol.classList.add('carousel-homepage-slide-content');
+
+  if (imageCol && contentCol) {
+    const contentLink = contentCol.querySelector('a');
+    const picture = imageCol.querySelector('picture');
+    if (contentLink && picture) {
+      const wrapper = document.createElement('a');
+      wrapper.href = contentLink.href;
+      wrapper.setAttribute('aria-hidden', 'true');
+      wrapper.setAttribute('tabindex', '-1');
+      picture.parentNode.insertBefore(wrapper, picture);
+      wrapper.append(picture);
+    }
+  }
+
+  if (imageCol) slide.append(imageCol);
+  if (contentCol) slide.append(contentCol);
 
   const labeledBy = slide.querySelector('h1, h2, h3, h4, h5, h6');
   if (labeledBy) {

@@ -176,72 +176,66 @@ var CustomImportScript = (() => {
 
   // tools/importer/parsers/cards-feature.js
   function parse3(element, { document }) {
-    if (!element.parentElement) {
+    if (!element.parentElement) return;
+    const col = element.closest(".col-sm-4");
+    const row = col ? col.closest(".row") : null;
+    if (!row) return;
+    if (row.dataset.cardsFeatureParsed) {
+      if (col && col.parentElement) col.remove();
+      else element.remove();
       return;
     }
-    const row = element.closest(".row");
-    if (row && row.dataset.cardsFeatureParsed) {
-      element.remove();
-      return;
-    }
-    if (row) {
-      row.dataset.cardsFeatureParsed = "true";
-    }
-    let featureBoxes;
-    if (row) {
-      featureBoxes = Array.from(row.querySelectorAll(".col-sm-4 .feature-box"));
-    }
-    if (!featureBoxes || featureBoxes.length === 0) {
-      featureBoxes = [element];
-    }
+    row.dataset.cardsFeatureParsed = "true";
+    const cols = Array.from(row.querySelectorAll(".col-sm-4"));
     const cells = [];
-    featureBoxes.forEach((box) => {
-      const imageCell = [];
-      const img = box.querySelector("img");
-      if (img) {
-        const newImg = document.createElement("img");
-        newImg.src = img.getAttribute("src") || img.src || "";
-        const alt = img.getAttribute("alt") || "";
-        if (alt) newImg.alt = alt;
-        imageCell.push(newImg);
-      } else {
-        const bgStyle = box.style.backgroundImage || (typeof window !== "undefined" ? window.getComputedStyle(box).backgroundImage : "");
-        const bgMatch = bgStyle.match(/url\(["']?([^"')]+)["']?\)/);
-        if (bgMatch && bgMatch[1]) {
-          const newImg = document.createElement("img");
-          newImg.src = bgMatch[1];
-          imageCell.push(newImg);
-        }
-      }
-      const textCell = [];
+    cols.forEach((c) => {
+      const anchor = c.querySelector("a");
+      const box = c.querySelector(".feature-box");
+      if (!box) return;
       const label = box.querySelector("p");
       const labelText = label ? label.textContent.trim() : "";
-      let linkHref = "";
-      const parentAnchor = box.closest("a");
-      const childAnchor = box.querySelector("a");
-      if (parentAnchor) {
-        linkHref = parentAnchor.href || parentAnchor.getAttribute("href") || "";
-      } else if (childAnchor) {
-        linkHref = childAnchor.href || childAnchor.getAttribute("href") || "";
+      const href = anchor ? anchor.getAttribute("href") || "" : "";
+      let imgSrc = "";
+      const style = box.getAttribute("style") || "";
+      const bgMatch = style.match(/url\(['"]?([^'")\s]+)['"]?\)/);
+      if (bgMatch && bgMatch[1]) {
+        imgSrc = bgMatch[1];
+        if (imgSrc.startsWith("/")) imgSrc = "https://www.worksafenb.ca" + imgSrc;
       }
-      if (labelText && linkHref) {
+      if (!imgSrc) {
+        const bgComputed = window.getComputedStyle(box).backgroundImage;
+        const compMatch = bgComputed && bgComputed !== "none" ? bgComputed.match(/url\(["']?([^"')]+)["']?\)/) : null;
+        if (compMatch) imgSrc = compMatch[1];
+      }
+      const imageCell = document.createElement("div");
+      if (imgSrc) {
+        const img = document.createElement("img");
+        img.src = imgSrc;
+        img.alt = labelText;
+        imageCell.append(img);
+      }
+      const textCell = document.createElement("div");
+      if (labelText) {
         const p = document.createElement("p");
-        const a = document.createElement("a");
-        a.href = linkHref;
-        a.textContent = labelText;
-        p.append(a);
-        textCell.push(p);
-      } else if (labelText) {
-        const p = document.createElement("p");
-        p.textContent = labelText;
-        textCell.push(p);
+        if (href) {
+          const a = document.createElement("a");
+          a.href = href;
+          a.textContent = labelText;
+          p.append(a);
+        } else {
+          p.textContent = labelText;
+        }
+        textCell.append(p);
       }
-      if (imageCell.length > 0 || textCell.length > 0) {
-        cells.push([imageCell, textCell]);
-      }
+      cells.push([imageCell, textCell]);
     });
-    const block = WebImporter.Blocks.createBlock(document, { name: "cards-feature", cells });
-    element.replaceWith(block);
+    if (cells.length === 0) return;
+    const block = WebImporter.Blocks.createBlock(document, {
+      name: "cards-feature",
+      cells
+    });
+    row.before(block);
+    row.remove();
   }
 
   // tools/importer/parsers/tabs-resources.js

@@ -4,89 +4,111 @@
 /**
  * Parser for columns-contact variant.
  * Base block: columns
- * Source: https://www.worksafenb.ca/
- * Selector: .row.toolbar
+ * Source: https://www.worksafenb.ca/ + section landing pages (/employers/, /workers/, /health-care/, /policy-and-legal/)
  *
- * Source structure:
- *   .row.toolbar
- *     .col-sm-8  -> E-News Sign-up heading, envelope icon, signup link + text
- *     .col-sm-4  -> Connect With Us heading, phone number, email link, social media links
+ * Two logical layouts in the source:
+ *   A) Homepage: .row.toolbar > .col-sm-12 > .row > (.col-sm-8 E-News | .col-sm-4 Connect) (side-by-side)
+ *   B) Section-landing one-column: .row.toolbar.toolbar-one-column > .col-sm-12 > two stacked .row > .col-sm-12 (E-News on top, Connect below)
+ *   C) Section-landing two-column: .row.toolbar.toolbar-two-column (same as B but nested inside .col-md-8)
  *
- * Target: Columns block with two columns (one row of content cells).
+ * Strategy: find the two <h2> headings ("E-News Sign-up" and "Connect With Us") and use each heading's
+ * nearest logical container as the source for that column's content. Output is always a 2-column row.
  */
 export default function parse(element, { document }) {
+  // Find all h2 headings; expect two — "E-News ... Sign-up" and "Connect ... With Us"
+  const headings = Array.from(element.querySelectorAll('h2'));
+
+  let enewsHeading = null;
+  let connectHeading = null;
+  headings.forEach((h) => {
+    const text = h.textContent.trim().replace(/\s+/g, ' ').toLowerCase();
+    if (!enewsHeading && text.includes('e-news')) enewsHeading = h;
+    else if (!connectHeading && text.includes('connect')) connectHeading = h;
+  });
+
+  // Helper: pick nearest enclosing .col-sm-* or .col-md-*
+  const findSource = (heading) => {
+    if (!heading) return null;
+    // Walk up until we find a col container whose content is JUST this heading's section
+    // Prefer the closest .col-sm-8/.col-sm-4 (homepage) or the wrapping row of a col-sm-12 (landing)
+    const col8or4 = heading.closest('.col-sm-8, .col-sm-4');
+    if (col8or4) return col8or4;
+    // Landing-page layout: heading is inside .col-sm-12 > .row > .col-sm-12
+    const innerCol = heading.closest('.col-sm-12');
+    // Walk up to the closest .row that doesn't include both headings
+    if (innerCol) {
+      const containingRow = innerCol.closest('.row');
+      if (containingRow) return containingRow;
+      return innerCol;
+    }
+    return heading.parentElement;
+  };
+
+  const enewsSrc = findSource(enewsHeading);
+  const connectSrc = findSource(connectHeading);
+
   // --- Column 1: E-News Sign-up ---
-  const col1Source = element.querySelector('.col-sm-8');
   const col1Content = [];
-
-  if (col1Source) {
-    // Heading
-    const col1Heading = col1Source.querySelector('h2');
-    if (col1Heading) {
-      const h2 = document.createElement('h2');
-      h2.textContent = col1Heading.textContent.trim().replace(/\s+/g, ' ');
-      col1Content.push(h2);
+  if (enewsHeading) {
+    const h2 = document.createElement('h2');
+    h2.textContent = enewsHeading.textContent.trim().replace(/\s+/g, ' ');
+    col1Content.push(h2);
+  }
+  const signupDiv = enewsSrc ? enewsSrc.querySelector('.e-news-signup-text') : null;
+  if (signupDiv) {
+    const p = document.createElement('p');
+    const signupLink = signupDiv.querySelector('a');
+    if (signupLink) {
+      const a = document.createElement('a');
+      a.href = (signupLink.getAttribute('href') || '').trim();
+      a.textContent = signupLink.textContent.trim();
+      p.append(a);
     }
-
-    // Signup text and link from .e-news-signup-text
-    const signupDiv = col1Source.querySelector('.e-news-signup-text');
-    if (signupDiv) {
-      const p = document.createElement('p');
-      const signupLink = signupDiv.querySelector('a');
-      if (signupLink) {
-        const a = document.createElement('a');
-        a.href = signupLink.href || signupLink.getAttribute('href');
-        a.textContent = signupLink.textContent.trim();
-        p.append(a);
-      }
-      // Append any trailing text after the link
-      const fullText = signupDiv.textContent.trim();
-      const linkText = signupLink ? signupLink.textContent.trim() : '';
-      const trailingText = fullText.substring(fullText.indexOf(linkText) + linkText.length).trim();
-      if (trailingText) {
-        p.append(` ${trailingText}`);
-      }
-      col1Content.push(p);
-    }
+    // Append any trailing text after the link
+    const fullText = signupDiv.textContent.trim();
+    const linkText = signupLink ? signupLink.textContent.trim() : '';
+    const trailingText = linkText
+      ? fullText.substring(fullText.indexOf(linkText) + linkText.length).trim()
+      : fullText;
+    if (trailingText) p.append(` ${trailingText}`);
+    col1Content.push(p);
   }
 
   // --- Column 2: Connect With Us ---
-  const col2Source = element.querySelector('.col-sm-4');
   const col2Content = [];
+  if (connectHeading) {
+    const h2 = document.createElement('h2');
+    h2.textContent = connectHeading.textContent.trim().replace(/\s+/g, ' ');
+    col2Content.push(h2);
+  }
 
-  if (col2Source) {
-    // Heading
-    const col2Heading = col2Source.querySelector('h2');
-    if (col2Heading) {
-      const h2 = document.createElement('h2');
-      h2.textContent = col2Heading.textContent.trim().replace(/\s+/g, ' ');
-      col2Content.push(h2);
-    }
-
-    // Phone number text - direct text node before the <br> and <a>
-    // Source has: "Call toll-free in Canada 1 800 999-9775 <br>"
-    // We need to extract text nodes that are direct children of .col-sm-4
-    const col2Clone = col2Source.cloneNode(true);
-    // Remove child elements to isolate text nodes
-    const childElements = Array.from(col2Clone.children);
+  if (connectSrc) {
+    // Phone text — try dedicated span first, then text node scan
     let phoneText = '';
-    for (const node of col2Source.childNodes) {
-      if (node.nodeType === 3) { // TEXT_NODE
-        const text = node.textContent.trim();
-        if (text && text.includes('toll-free')) {
-          phoneText = text;
+    const phoneSpan = connectSrc.querySelector('.call-toll-free');
+    if (phoneSpan && phoneSpan.textContent.includes('toll-free')) {
+      phoneText = phoneSpan.textContent.trim();
+    }
+    if (!phoneText) {
+      // Walk text nodes looking for "toll-free"
+      const walker = (connectSrc.ownerDocument || document).createTreeWalker(
+        connectSrc,
+        /* NodeFilter.SHOW_TEXT = */ 4,
+        null,
+      );
+      let node;
+      while ((node = walker.nextNode())) {
+        const t = node.textContent.trim();
+        if (t && t.toLowerCase().includes('toll-free')) {
+          phoneText = t.replace(/\s+/g, ' ');
           break;
         }
       }
     }
-    // Also check for text that might span across nodes
     if (!phoneText) {
-      // Fallback: look for text containing phone number pattern
-      const fullColText = col2Source.textContent;
-      const phoneMatch = fullColText.match(/Call toll-free[^<\n]*/);
-      if (phoneMatch) {
-        phoneText = phoneMatch[0].trim();
-      }
+      const fullText = connectSrc.textContent;
+      const m = fullText.match(/Call toll-free[^\n\r]*?\d[\d\s-]+/);
+      if (m) phoneText = m[0].trim();
     }
     if (phoneText) {
       const p = document.createElement('p');
@@ -94,40 +116,35 @@ export default function parse(element, { document }) {
       col2Content.push(p);
     }
 
-    // Email link (mailto:)
-    const emailLink = col2Source.querySelector('a[href^="mailto:"]');
-    if (emailLink) {
+    // Email OR General Inquiries link
+    const mailto = connectSrc.querySelector('a[href^="mailto:"]');
+    const inquiries = connectSrc.querySelector('a[title="General Inquiries"]');
+    const contactLink = mailto || inquiries;
+    if (contactLink) {
       const p = document.createElement('p');
       const a = document.createElement('a');
-      a.href = emailLink.href || emailLink.getAttribute('href');
-      // Get clean text without glyphicon spans
-      a.textContent = emailLink.title || emailLink.textContent.trim().replace(/\s+/g, ' ');
+      a.href = (contactLink.getAttribute('href') || '').trim();
+      a.textContent = contactLink.getAttribute('title') || contactLink.textContent.trim().replace(/\s+/g, ' ');
       p.append(a);
       col2Content.push(p);
     }
 
-    // Social media links from .social ul li a
-    const socialLinks = Array.from(col2Source.querySelectorAll('.social ul li a'));
+    // Social links
+    const socialLinks = Array.from(connectSrc.querySelectorAll('.social ul li a'));
     if (socialLinks.length > 0) {
       const p = document.createElement('p');
       socialLinks.forEach((link, index) => {
         const a = document.createElement('a');
-        a.href = link.href || link.getAttribute('href');
-        a.textContent = link.title || link.className.replace(/function|small/g, '').trim();
-        if (index > 0) {
-          p.append(' ');
-        }
+        a.href = (link.getAttribute('href') || '').trim();
+        a.textContent = link.getAttribute('title') || link.className.replace(/function|small/g, '').trim();
+        if (index > 0) p.append(' ');
         p.append(a);
       });
       col2Content.push(p);
     }
   }
 
-  // Build the cells array: single row with two columns
-  const cells = [
-    [col1Content, col2Content],
-  ];
-
+  const cells = [[col1Content, col2Content]];
   const block = WebImporter.Blocks.createBlock(document, { name: 'columns-contact', cells });
   element.replaceWith(block);
 }

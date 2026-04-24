@@ -1,0 +1,42 @@
+{
+  "variantName": "cards-overlay",
+  "baseBlock": "cards",
+  "version": "1.0.0",
+  "created": "2026-04-24T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/workers/",
+    "originPage": "WorkSafeNB section landing pages",
+    "blockPosition": "body"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark-on-image",
+    "density": "compact",
+    "purpose": "promotional-card",
+    "imagePattern": "background-image-with-caption"
+  },
+  "contentPattern": {
+    "structure": "background image with caption bar at bottom",
+    "buttonCount": 0,
+    "imageCount": 1
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "section landing pages",
+      "promotional cards with imagery",
+      "visual navigation entries"
+    ],
+    "notSuitableFor": [
+      "news lists",
+      "content-heavy cards",
+      "multi-paragraph excerpts"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "content/workers",
+      "content/health-care"
+    ],
+    "reuseCount": 2,
+    "lastUsed": "2026-04-24T00:00:00.000Z"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "variantName": "nav-panel",
+  "baseBlock": "nav-panel",
+  "version": "1.0.0",
+  "created": "2026-04-24T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.worksafenb.ca/employers/",
+    "originPage": "WorkSafeNB section landing pages",
+    "blockPosition": "body"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "compact",
+    "purpose": "section-navigation",
+    "imagePattern": "none"
+  },
+  "contentPattern": {
+    "structure": "header bar + list of links + optional View All toggle",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "reuseGuidance": {
+    "suitableFor": [
+      "section landing pages",
+      "topic index pages",
+      "sidebar navigation groups"
+    ],
+    "notSuitableFor": [
+      "marketing promotions",
+      "carousel content",
+      "form pages"
+    ]
+  },
+  "usage": {
+    "pagesUsing": [
+      "content/employers",
+      "content/workers",
+      "content/health-care",
+      "content/policy-and-legal"
+    ],
+    "reuseCount": 4,
+    "lastUsed": "2026-04-24T00:00:00.000Z"
+  }
+}

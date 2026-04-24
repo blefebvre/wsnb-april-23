@@ -2,26 +2,18 @@
 /* global WebImporter */
 
 /**
- * Transformer: WorkSafeNB homepage section breaks and section metadata.
- * Inserts <hr> between sections and adds Section Metadata blocks for styled sections.
+ * Transformer: section-landing template section breaks and metadata.
  *
- * Runs in `beforeTransform` so it can query original DOM selectors (e.g. `.row.toolbar`)
- * before parsers replace them with block tables.
- *
- * Sections defined in template:
- *   1. Hero Carousel       -> .home-carousel-container (no style, first section - no <hr>)
- *   2. News and Sidebar     -> .container > .row:nth-of-type(2) (no style)
- *   3. Feature Cards        -> .container > .row:nth-of-type(3) (no style)
- *   4. Tabs Section         -> .home-page-tabs (no style)
- *   5. E-News and Connect   -> .row.toolbar (style: dark)
- *   6. Footer               -> .footer-top (style: dark) - may be removed by cleanup transformer
+ * Runs in `beforeTransform` so it can query original DOM selectors before parsers
+ * replace elements with block tables. Inserts <hr> before every non-first section
+ * and adds a Section Metadata block after sections that declare a `style`.
  */
 const TransformHook = { beforeTransform: 'beforeTransform', afterTransform: 'afterTransform' };
 
 export default function transform(hookName, element, payload) {
   if (hookName !== TransformHook.beforeTransform) return;
   const tmpl = payload && payload.template;
-  if (!tmpl || tmpl.name !== 'homepage') return;
+  if (!tmpl || tmpl.name !== 'section-landing') return;
   const sections = tmpl.sections;
   if (!sections || sections.length < 2) return;
 

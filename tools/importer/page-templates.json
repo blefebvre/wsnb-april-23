@@ -104,6 +104,66 @@
           ]
         }
       ]
+    },
+    {
+      "name": "section-landing",
+      "urls": [
+        "https://www.worksafenb.ca/health-care/",
+        "https://www.worksafenb.ca/workers/",
+        "https://www.worksafenb.ca/employers/",
+        "https://www.worksafenb.ca/policy-and-legal/"
+      ],
+      "description": "Top-level section landing page with H1 title, rows of navigation panels, optional image-overlay cards, optional announcements, and shared E-News/Connect toolbar",
+      "blocks": [
+        {
+          "name": "announcements",
+          "instances": [
+            ".news-widget-link-container.news-slider"
+          ]
+        },
+        {
+          "name": "cards-overlay",
+          "instances": [
+            ".image-with-overlay"
+          ]
+        },
+        {
+          "name": "nav-panel",
+          "instances": [
+            ".side-nav.section-nav"
+          ]
+        },
+        {
+          "name": "columns-contact",
+          "instances": [
+            ".row.toolbar"
+          ]
+        }
+      ],
+      "sections": [
+        {
+          "id": "section-1",
+          "name": "Main Content",
+          "selector": ".umb-grid",
+          "style": null,
+          "blocks": [
+            "announcements",
+            "cards-overlay",
+            "nav-panel"
+          ],
+          "defaultContent": []
+        },
+        {
+          "id": "section-2",
+          "name": "E-News and Connect",
+          "selector": ".row.toolbar",
+          "style": "dark",
+          "blocks": [
+            "columns-contact"
+          ],
+          "defaultContent": []
+        }
+      ]
     }
   ]
 }

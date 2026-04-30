@@ -43,7 +43,9 @@ node $SCRIPTS/validate-bulk-import.js
 node $SCRIPTS/add-urls-to-template.js --template <template> --urls tools/importer/urls-<template>.txt
 ```
 
-**Every parser edit requires re-bundling and re-importing.**
+**Every parser edit requires re-bundling and re-importing.** The `.bundle.js` is esbuild output — if you edit the source `.js` but forget to rebundle, `run-bulk-import.js` will silently run the old parser. A telltale: if your console.log additions don't appear in the bulk-import output, you forgot to rebundle.
+
+Changes to the **cleanup transformer** affect every template — always rebundle ALL import scripts and re-import ALL pages after editing it, then diff the resulting `.plain.html` files to confirm no unintended removals.
 
 ### Multi-Page Import Workflow
 
@@ -82,25 +84,17 @@ The dev server serves nested paths — tested and confirmed.
 
 ## Migration Scope and Template Plan
 
-Only the homepage (`https://www.worksafenb.ca/`) has been migrated so far. One template (`homepage`) in `page-templates.json` covering one URL.
-
-**Templates planned: TBD — need to crawl and classify.** The site has at least these top-level trees (from the nav):
-- `/safety-topics/` — topic listing + detail pages
-- `/workers/` — worker resources
-- `/employers/` — employer resources
-- `/health-care/` — health care provider resources
-- `/policy-and-legal/` — policy pages
-- `/myservices/` — portal/services
-- `/contact/` — contact page
-- `/about-us/` — about pages, includes `/about-us/news-and-events/news/2026/...` news detail pages
-
-These likely need 3-5 templates (e.g. `interior-page`, `news-article`, `listing-page`). No classification has been done yet.
-
-### Section 6 (Footer) in page-templates.json
-
 Two templates migrated:
 - **homepage** — `https://www.worksafenb.ca/` (1 URL)
 - **section-landing** — `https://www.worksafenb.ca/employers/`, `/workers/`, `/health-care/`, `/policy-and-legal/` (4 URLs)
+
+**Still unclassified.** The site has these top-level trees that likely need their own templates:
+- `/safety-topics/` — topic listing + detail pages
+- `/myservices/` — portal/services (likely external redirect, may not need migration)
+- `/contact/` — single contact page
+- `/about-us/` — about pages, includes news detail pages at `/about-us/news-and-events/news/2026/...`
+
+Probable future templates: `interior-page`, `news-article`, `listing-page`. No crawl has been run.
 
 ## Block Variants
 
@@ -116,15 +110,12 @@ Section-landing variants (import-section-landing.js):
 - `cards-overlay` — single image-overlay card (background image + caption bar)
 - `announcements` — default content (H2 + list + View All) for the healthcare news widget
 
-**Deprecated — do not wire up:**
-- `blocks/hero-carousel/` — replaced by `carousel-homepage`. Not used in any import script or page template. Safe to delete.
-
 **Boilerplate blocks (not customized, not directly used by imported content):**
 - `blocks/hero/`, `blocks/cards/`, `blocks/columns/` — vanilla copies from boilerplate. Variant blocks above are used instead.
 - `blocks/metadata/` — no-op stub. `WebImporter.rules.createMetadata` emits a `<div class="metadata">` page block in every import; aem.live hoists its content into `<head>` at publish time, but local dev needs the stub to prevent 404s.
 
 **Deprecated — do not wire up:**
-- `blocks/hero-carousel/` — replaced by `carousel-homepage`.
+- `blocks/hero-carousel/` — replaced by `carousel-homepage`. Not used in any import script or page template. Safe to delete.
 
 ### Variant Reuse Rules
 
@@ -134,13 +125,17 @@ When migrating a new page, try to match existing variants first using the `metad
 
 ### `worksafenb-cleanup.js`
 Removes non-authorable site chrome. **Safe for all WorkSafeNB pages** — all selectors target site-wide elements:
-- **beforeTransform**: `.bx-clone` (bxSlider dupes), `.bx-controls` (carousel pager), `table.gssb_c` (Google search dropdowns)
+- **beforeTransform**: `.bx-clone` (bxSlider dupes), `.bx-controls` (carousel pager), `table.gssb_c` (Google search dropdowns), `.breadcrumb-container` + `ul.breadcrumb` (Home > section breadcrumbs on interior pages)
 - **afterTransform**: `nav.navbar`, `img.print-logo`, `#to-top-waypoint`, `.footer-top`, `.footer-bottom`, `a.go-top`, `.alert-message-container-bottom`, `.search-container`, `noscript`, empty trailing divs
 
-### `worksafenb-sections.js`
-Reads `payload.template.sections` and inserts `<hr>` section breaks + Section Metadata blocks. **Template-specific** — each template must define its own `sections[]` array in `page-templates.json` with valid selectors.
+### Section transformers
+Two template-specific section transformers read `payload.template.sections` and insert `<hr>` + Section Metadata blocks. Both **guard on `payload.template.name`** so they no-op on the wrong template:
+- `worksafenb-sections.js` — homepage, runs `beforeTransform`
+- `worksafenb-sections-landing.js` — section-landing, runs `beforeTransform`
 
-**Debug tip**: If a section selector doesn't match, the transformer silently skips it — no error. If sections are missing in the output, check selectors against the live DOM at import time.
+Both run `beforeTransform` so they can query original DOM selectors (e.g. `.row.toolbar`) before parsers replace those elements with block tables. If you run them `afterTransform`, section metadata silently disappears because the selector no longer matches.
+
+**Debug tip**: If a section selector doesn't match, the transformer silently skips it — no error. If sections are missing in the output, check selectors against the live DOM at import time and confirm the template-name guard matches.
 
 ## Auto-Blocking
 
@@ -178,10 +173,10 @@ Key CSS techniques:
 
 ## Section Styles
 
-The section transformer creates `style: "dark"` metadata on sections 5 and 6. Corresponding CSS in styles.css:
+Both templates mark the E-News/Connect toolbar section with `style: "dark"`. Homepage also marks the footer section as `dark`. Corresponding CSS in styles.css:
 ```css
 main .section.dark { background-color: #003d69; color: #fff; padding: 30px 0; }
-main .section.dark h2..h6 { color: #fff; }
+main .section.dark h2, main .section.dark h3, main .section.dark h4, main .section.dark h5, main .section.dark h6 { color: #fff; }
 main .section.dark a:any-link { color: #fff; }
 ```
 
@@ -196,6 +191,8 @@ For new section styles on future templates, add matching `main .section.<style-n
 5. **Parser ordering when multiple blocks share a row**: When a parser for block A and block B both match elements inside the same `.row.clearfix` (e.g. section-landing has nav-panels + cards-overlay side by side), order matters. `findBlocksOnPage` iterates `template.blocks[]` in array order. The "outer" parser (nav-panel, which collapses the whole row) must run AFTER the "inner" parsers (cards-overlay). Also: the outer parser must NOT do `row.remove()` — only remove the columns it owns — or it will wipe out blocks the inner parsers already placed.
 6. **Guard against detached elements**: After earlier parsers run, `block.element` may have been removed/replaced. Check `block.element.isConnected` before invoking the parser.
 7. **Section transformer timing**: If a transformer needs to place `<hr>` or Section Metadata by original DOM selectors (e.g. `.row.toolbar`), run it in `beforeTransform` — once parsers replace elements with block tables, those selectors no longer match.
+8. **Transformers run for every template** — a template-specific transformer (like the section transformers) must guard with `if (payload.template.name !== '<expected>') return;` or it will corrupt sibling templates' output.
+9. **Validator reports duplicates for bx-slider widgets**: The parser validator harness fires scripts that clone slider items; the output may show duplicate entries (e.g. news announcements) even when the parser correctly dedupes by href. Trust local `JSDOM` testing on the raw HTML and the final `.plain.html` output; the validator's "Extracted Content" preview is not always authoritative.
 
 ## Carousel Contract
 
@@ -223,8 +220,13 @@ npx -y @adobe/aem-cli up --no-open --port 3000
 ```
 - Serves local `.plain.html` from `content/` directory, including nested paths
 - Proxies missing content to `https://main--wsnb-april-23--blefebvre.aem.page`
-- Homepage at `http://localhost:3000/content/index`
-- Headless Chromium for screenshots: `/ms-playwright/chromium-1217/chrome-linux64/chrome`
+- **Rendered pages (`/content/<name>` without extension) only work for URLs that exist remotely** — the dev server fetches `.md` from the content bus and 404s for locally-imported-but-unpushed pages. `.plain.html` alone always works.
+- For **local visual validation of pages not yet pushed**, create a `<page>.html` wrapper in the workspace root that inlines the imported `.plain.html` content inside `<main>`, plus the head/scripts boilerplate. The dev server serves that wrapper directly, and scripts.js decorates the inlined content. These test wrappers are ephemeral — do not commit them.
+- Headless Chromium for screenshots: `/ms-playwright/chromium-1208/chrome-linux64/chrome` (version changes with package updates; check with `ls /ms-playwright/`)
+
+### Verification approach
+
+Visual diff via screenshots is useful but flaky — image rendering from the Read tool can show stale/cached content. More reliable: run Playwright DOM inspection via a small Node script that reports H1 text, block names (from `[data-block-name]`), and section/block counts. This catches content/wiring regressions without depending on pixel comparisons.
 
 ### Git Note
 
